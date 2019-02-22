@@ -4,8 +4,8 @@
 #include <vector>			//C++ vector (array) class
 #include <Windows.h>		//standard windows OS file
 #include <sstream>			//string streams
-#include <ShlObj.h>			//??????	
-#include <Shlwapi.h>		//??????
+#include <ShlObj.h>			
+#include <Shlwapi.h>		
 #include <fstream>			//file stream
 #include "ips.h"
 #include "vmemory.h"
@@ -97,18 +97,22 @@ void Initialize_SBF161_Decommute_Table( int grab_num_cols,
 										   }
 }
 
+
+// use stim library to get the file name
 std::string GetPGMFileName(const std::string &  parent_directory,
 						   const std::string & base_file_name,
 						   size_t grab_index,
-						   int frame_index)
-{
+						   int frame_index){
+	//create a mask of the file name based on the base
 	stim::filename mask(base_file_name);
+	//insert the grab index into the file name padded with extra heading zeros
 	stim::filename newfilename = mask.insert(grab_index, (size_t) 5);
 	std::stringstream ss;
 	ss << parent_directory << newfilename.prefix()<<"_"<< frame_index;
 	return ss.str();
 }
 
+//write the data into a binary file
 void WriteArray(const char *filename, uint32_t *data, size_t size) {
 	FILE *fp;
 	//open file for output
@@ -121,6 +125,7 @@ void WriteArray(const char *filename, uint32_t *data, size_t size) {
 	fwrite(data, sizeof(uint32_t), size, fp);
 	fclose(fp);
 }
+
 
 uint32_t CalculateMean(HANDLE_IPS_ACQ handle_ips, int fpg)
 {
@@ -213,14 +218,13 @@ uint32_t CalculateMean(HANDLE_IPS_ACQ handle_ips, int fpg)
 	return mean;
 }
 
-void CreateDisplayImageExample(HANDLE_IPS_ACQ handle_ips, int fpg, std::string dest_sub_path)
+void CaptureImages(HANDLE_IPS_ACQ handle_ips, int fpg, std::string dest_sub_path)
 {
 	uint32_t frame_width = 128;
 	uint32_t frame_height = 128;
 	int bytes_per_pixel = 2;
 	int frame_data_size = frame_width * frame_height * bytes_per_pixel;
 
-	//std::chrono::high_resolution_clock::time_point t0 = std::chrono::high_resolution_clock::now();
 	// Configure the frame acquisition window size
 	CHECK_IPS(IPS_SetFrameWindow( handle_ips, 
 		0,
@@ -228,10 +232,8 @@ void CreateDisplayImageExample(HANDLE_IPS_ACQ handle_ips, int fpg, std::string d
 		frame_width,
 		frame_height));
 
-	//std::chrono::high_resolution_clock::time_point t4 = std::chrono::high_resolution_clock::now();
 	// Start capturing a block of fpg frames
 	tsi::ips::VMemory<uint64_t> buffer(frame_data_size*fpg);
-	//std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
 
 	CHECK_IPS(IPS_StartGrabbing( handle_ips,         
 		fpg,            // Capture Fra_Number frames then stop capturing
@@ -239,8 +241,6 @@ void CreateDisplayImageExample(HANDLE_IPS_ACQ handle_ips, int fpg, std::string d
 		buffer.size(), // size of user allocated buffer
 		false));        // No wrap
 
-
-	//std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
 	// Wait for all frames to be acquired
 	uint64_t frame_number;
 	uint8_t * p_frame = NULL;
@@ -250,8 +250,6 @@ void CreateDisplayImageExample(HANDLE_IPS_ACQ handle_ips, int fpg, std::string d
 		false,                       // Pause after WaitFrame returns
 		&p_frame,                    // Return a pointer to the frame
 		&frame_number));              // Return the frame number of the returned frame
-	//std::chrono::high_resolution_clock::time_point t3 = std::chrono::high_resolution_clock::now();
-
 
 	// *********** Decommute ********************
 	//
@@ -272,8 +270,6 @@ void CreateDisplayImageExample(HANDLE_IPS_ACQ handle_ips, int fpg, std::string d
 	std::vector<uint16_t> display_image(frame_width * frame_height);
 	std::vector<uint16_t> display_image_all(frame_width * frame_height, 0);
 	uint32_t * p_display_image;
-	//std::string module_dir = GetModuleDirectory();
-	//std::string image_dir = module_dir + "\Frames1800\\";
 
 	for (int frame_index = 0; frame_index < frame_number; frame_index++)
 	{
@@ -290,10 +286,7 @@ void CreateDisplayImageExample(HANDLE_IPS_ACQ handle_ips, int fpg, std::string d
 			// uncomment the following line to invert the image
 			display_image[i] = display_image[i] ^ 0x3FFF;
 		}
-
-		//std::transform ( display_image_all.begin(), display_image_all.end(), display_image.begin(), display_image_all.begin(), std::plus<uint32_t>());
 		display_image_all.insert(display_image_all.end(), display_image.begin(), display_image.end());
-
 	}
 	//std::transform( display_image_all.begin(), display_image_all.end(), display_image_all.begin(), std::bind2nd(std::multiplies<uint32_t>(), 0.000625));
 	//duration_decommute = ( std::clock() - start_decommute ) / (double) CLOCKS_PER_SEC;
@@ -334,21 +327,8 @@ void CreateDisplayImageExample(HANDLE_IPS_ACQ handle_ips, int fpg, std::string d
 		fclose(picFile);
 
 	//WriteArray(TXTfilename.c_str(), p_display_image, frame_height*frame_width);
-
-	//std::chrono::high_resolution_clock::time_point t6 = std::chrono::high_resolution_clock::now();
-	//duration_saving_singleframe = ( std::clock() - start_saving_singleframe ) / (double) CLOCKS_PER_SEC;
-	//std::cout << "\nDuration for saving 1 frame: " << duration_saving_singleframe << " seconds"<< std::endl ;
 	// Stop acquiring frames
 	CHECK_IPS(IPS_StopGrabbing(handle_ips));
-	//duration_saving = ( std::clock() - start_saving ) / (double) CLOCKS_PER_SEC;
-	//std::cout << "\nDuration for saving "<< fpg << " frames: " << duration_saving << " seconds"<< std::endl ;
-
-	/*std::cout << "   "<<std::endl;
-	std::cout << "acquring: " << std::chrono::duration_cast<std::chrono::duration<double>>(t5 - t4).count()<<std::endl;
-	std::cout << "saving:    " << std::chrono::duration_cast<std::chrono::duration<double>>(t6 - t5).count()<<std::endl;
-	std::cout << "total time: " << std::chrono::duration_cast<std::chrono::duration<double>>(t6 - t4).count();
-	std::cout << "   "<<std::endl;*/
-
 }
 
 void ipsPrintDiagnostics(HANDLE_IPS_ACQ handle) {
@@ -373,58 +353,71 @@ void ipsPrintDiagnostics(HANDLE_IPS_ACQ handle) {
 		std::cout << "Frame grabber diagnostics : " << std::string(diag_buffer.data()) << std::endl;	//print it
 }
 
+// compute the mean value of the detector and compensate for the laser power fluctuation
+// *wn: the wave number being imaging at
+// *QCL_index: the QCL channel used for emission
+// *QCL_MaxCur: the maximal settable current for the QCL channel
+// *HANDLE_IPS_ACQ: the handle for identify the detector
+// *frames: number of frames being averaged
+// *dest_sub_path: the destination path where the image is saved to
+// *threshold: the threshold of the mean value of the image
+// *laserpower_low: the minimal value of the laser power range to be tuned within
 void comp_imaging(int wn, int QCL_index, int QCL_MaxCur, HANDLE_IPS_ACQ handle,
 				   int frames, std::string dest_sub_path, uint32_t threshold, int laserpower_low){
 
-					  uint32_t ret;												//return value used by MIRcat laser control
-					  bool IsOn = false;
-					  bool santurate = false;
-					  int laserpower_high = 100;
-					  int mean_frame = 100;
-					  int tuning_count = 0;
-					  if(!(MIRcatSDK_TuneToWW(wn, MIRcatSDK_UNITS_CM1, QCL_index))){											//tuning to wn
+	uint32_t ret;												//return value used by MIRcat laser control
+	bool IsOn = false;
+	bool threshold_reached = false;
+	int laserpower_high = 100;
+	int mean_frame = 100;
+	int tuning_count = 0;
+	if(!(MIRcatSDK_TuneToWW(wn, MIRcatSDK_UNITS_CM1, QCL_index))){											//tuning to wn
+		bool isTuned = false;
+		while(!isTuned)
+		{
+			ret = MIRcatSDK_IsTuned(&isTuned);
+			::Sleep(500);
+		}
+		std::cout << "Tuned to " << wn << std::endl;
+	}
+	
+	//while the mean of the image is not around the threshold
+	while (!threshold_reached){
+		//tune the laser power up or down using a binary search
+		int p = (laserpower_low + laserpower_high) / 2;
+		float fCurrentInMilliAmps = QCL_MaxCur * p / 100;
+		//set the laser current to the middle point
+		if(!(MIRcatSDK_SetQCLParams( QCL_index, 100000, 500, fCurrentInMilliAmps))){
+				std::cout << "Set Laser Current to " << p << '%' << std::endl;					//set laser current 
+		}
 
-						  bool isTuned = false;
+		if(!(MIRcatSDK_IsEmissionOn(&IsOn))){
+			if(!(MIRcatSDK_TurnEmissionOn())){
+				std::cout << "Laser Emission on." << std::endl;
+			}
+		}
+		
+		//calculate mean after updating the laser power
+		uint32_t mean = CalculateMean(handle, mean_frame);
+		tuning_count++;
+		std::cout << "mean = " << mean << std::endl;
+		//calculate the bias
+		int diff = mean - threshold;
 
-						  while(!isTuned)
-						  {
-							  ret = MIRcatSDK_IsTuned(&isTuned);
-							  ::Sleep(500);
-						  }
-
-						  std::cout << "Tuned to " << wn << std::endl;
-					  }
-
-
-
-					  while (!santurate){
-
-					  	  int p = (laserpower_low + laserpower_high) / 2;
-					  	  float fCurrentInMilliAmps = QCL_MaxCur * p / 100;
-					  	  if(!(MIRcatSDK_SetQCLParams( QCL_index, 100000, 500, fCurrentInMilliAmps))){
-								  std::cout << "Set Laser Current to " << p << '%' << std::endl;					//set laser current 
-							  }
-
-							  if(!(MIRcatSDK_IsEmissionOn(&IsOn))){
-
-								  if(!(MIRcatSDK_TurnEmissionOn())){
-									  std::cout << "Laser Emission on." << std::endl;
-								  }
-							  }
-						  uint32_t mean = CalculateMean(handle, mean_frame);
-						  tuning_count++;
-						  std::cout << "mean = " << mean << std::endl;
-						  int diff = mean - threshold;
-
-						  if(abs(diff) <= 150 || tuning_count >= 7){
-								santurate = true;
-								CreateDisplayImageExample(handle, frames, dest_sub_path);											//capture images		 
-						}
-						  else if (mean > threshold)
-						  	  laserpower_high = p - 1;
-						  else if (mean < threshold)
-						  	  laserpower_low = p + 1;
-						}
+		//if the bias is within range or the tuning is timed out
+		if(abs(diff) <= 150 || tuning_count >= 7){
+			//set the flag to true
+			threshold_reached = true;
+			//capture images at this power level
+			CaptureImages(handle, frames, dest_sub_path);											//capture images		 
+		}
+		//else tune the power lower if the mean is too high
+		else if (mean > threshold)
+			laserpower_high = p - 1;
+		//tune the power higher if the mean is too low
+		else if (mean < threshold)
+			laserpower_low = p + 1;
+	}
 }
 
 int main(int argc, char* argv[]) {
@@ -507,40 +500,7 @@ int main(int argc, char* argv[]) {
 		printf( "********************************************************\n");
 		if(!(MIRcatSDK_IsInterlockedStatusSet(&bIlockSet) && !bIlockSet)){
 			std::cout <<"Interlock Set"<< std::endl;
-			/*if(!(MIRcatSDK_IsLaserArmed(&IsArmed) && !IsArmed)){
-				ret = MIRcatSDK_ArmDisarmLaser();
-				std::cout <<"Arming Laser...";
-				while ( !IsArmed )
-				{   
-					ret = MIRcatSDK_IsLaserArmed(&IsArmed);
-					::Sleep(1000);
-				}
-				std::cout << "done" << std::endl;
-			}*/
 		}
-
-
-		//wait until laser cool down to do tuning
-
-		/*printf( "********************************************************\n");
-		printf( "Cooling down Laser ... \n" );
-		printf( "********************************************************\n");
-		if(!(MIRcatSDK_AreTECsAtSetTemperature(&atTemp) && !atTemp)){
-			while ( !atTemp )
-			{   
-				for( uint8_t i = 1; i <= numQcls; i++ )
-				{
-					if(!(MIRcatSDK_GetQCLTemperature( i, &qclTemp )) && !(MIRcatSDK_GetTecCurrent( (int)i, &tecCur ))){
-						printf(" QCL%u    Temp: %.3f C     TEC%u       Current: %u mA\n", (int)i, qclTemp, (int)i, tecCur );
-					}						
-				}
-				printf( "********************************************************\n");
-				printf("   \n");
-				ret = MIRcatSDK_AreTECsAtSetTemperature(&atTemp);
-				::Sleep(1000);
-			}
-			std::cout << "done" << std::endl;
-		}*/
 	}
 
 	//
@@ -562,60 +522,47 @@ int main(int argc, char* argv[]) {
 		&hcam));											//fill the handle
 
 	ipsPrintDiagnostics(hcam);
-
-	//
-	//imaging
-	//
-
-
-
-		//tuning laser
 		
 		
-		bool * IsOn;										//get the sub folder for saving different wn images
+	bool * IsOn;										//get the sub folder for saving different wn images
 
 
-		printf( "========================================================\n");
-		std::cout << "Tuning to WN :" << wn << std::endl;
+	printf( "========================================================\n");
+	std::cout << "Tuning to WN :" << wn << std::endl;
 
-			std::stringstream sub_dir;												//create an empty string stream
-			sub_dir << dest_path << wn << "\\";												//append to the parent dir string
-			std::string dest_sub_path = sub_dir.str();
-			int mkdirFlag = mkdir(dest_sub_path.c_str());
-			if (mkdirFlag != 0){
-				printf ("Error : %s\n", strerror(errno));
-			}
-		
-			if ( wn >= 910 && wn <= 1170){
-
-			comp_imaging(wn, 4, 1400, hcam, frames, dest_sub_path, 9300, 60);
-
-			}
-
-			if ( wn >= 1172 && wn <= 1402){
-
-			comp_imaging(wn, 3, 1000, hcam, frames, dest_sub_path, 9500, 40);
-
-			}
-
-			if ( wn >= 1404 && wn <= 1700){
-
-			comp_imaging(wn, 2, 800, hcam, frames, dest_sub_path, 9300, 60);
-
-			}
-
-			if ( wn >= 1702 && wn <= 1910){
-
-			comp_imaging(wn, 1, 550, hcam, frames, dest_sub_path, 9300, 60);
-
-			}
-		
-
-	
-		if(!(MIRcatSDK_TurnEmissionOff())){
-			std::cout << "Laser Emission off." << std::endl;
-		}
-		//if(!(MIRcatSDK_DisarmLaser())){
-			//std::cout << "Laser Disarmed." << std::endl;
-		//}
+	std::stringstream sub_dir;												//create an empty string stream
+	sub_dir << dest_path << wn << "\\";												//append to the parent dir string
+	std::string dest_sub_path = sub_dir.str();
+	int mkdirFlag = mkdir(dest_sub_path.c_str());
+	if (mkdirFlag != 0){
+		printf ("Error : %s\n", strerror(errno));
 	}
+		
+	if ( wn >= 910 && wn <= 1170){
+
+	comp_imaging(wn, 4, 1400, hcam, frames, dest_sub_path, 9300, 60);
+
+	}
+
+	if ( wn >= 1172 && wn <= 1402){
+
+	comp_imaging(wn, 3, 1000, hcam, frames, dest_sub_path, 9500, 40);
+
+	}
+
+	if ( wn >= 1404 && wn <= 1700){
+
+	comp_imaging(wn, 2, 800, hcam, frames, dest_sub_path, 9300, 60);
+
+	}
+
+	if ( wn >= 1702 && wn <= 1910){
+
+	comp_imaging(wn, 1, 550, hcam, frames, dest_sub_path, 9300, 60);
+
+	}
+	
+	if(!(MIRcatSDK_TurnEmissionOff())){
+		std::cout << "Laser Emission off." << std::endl;
+	}
+}
