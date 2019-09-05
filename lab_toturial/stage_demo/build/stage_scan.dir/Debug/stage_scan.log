@@ -1,0 +1,17 @@
+﻿Build started 9/4/2019 11:20:24 AM.
+     1>Project "C:\Users\shihao\Documents\C_tutor\stage_demo\build\stage_scan.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /IC:\Users\shihao\Documents\C_tutor\stage_demo\source\include /IC:\Libraries\stimlib /Zi /nologo /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /GR /Fo"stage_scan.dir\Debug\\" /Fd"stage_scan.dir\Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt C:\Users\shihao\Documents\C_tutor\stage_demo\source\stage_scan_src.cpp
+         stage_scan_src.cpp
+     1>C:\Users\shihao\Documents\C_tutor\stage_demo\source\stage_scan_src.cpp(38): warning C4800: 'BOOL' : forcing value to bool 'true' or 'false' (performance warning)
+     1>C:\Users\shihao\Documents\C_tutor\stage_demo\source\stage_scan_src.cpp(39): warning C4800: 'BOOL' : forcing value to bool 'true' or 'false' (performance warning)
+     1>C:\Users\shihao\Documents\C_tutor\stage_demo\source\stage_scan_src.cpp(40): warning C4800: 'BOOL' : forcing value to bool 'true' or 'false' (performance warning)
+     1>C:\Users\shihao\Documents\C_tutor\stage_demo\source\stage_scan_src.cpp(92): warning C4244: 'argument' : conversion from 'float' to 'unsigned int', possible loss of data
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\shihao\Documents\C_tutor\stage_demo\build\stage_scan.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib "C:\Users\shihao\Documents\Teledyne Scientific & Imaging\built-qcl-build-2019\A3200C.lib" /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Users/shihao/Documents/C_tutor/stage_demo/build/stage_scan.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/shihao/Documents/C_tutor/stage_demo/build/Debug/stage_scan.lib" /MACHINE:X86 /SAFESEH  /machine:X86 stage_scan.dir\Debug\stage_scan_src.obj
+         stage_scan.vcxproj -> C:\Users\shihao\Documents\C_tutor\stage_demo\build\stage_scan.exe
+     1>Done Building Project "C:\Users\shihao\Documents\C_tutor\stage_demo\build\stage_scan.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:01.21

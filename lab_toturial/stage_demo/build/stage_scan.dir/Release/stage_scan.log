@@ -1,0 +1,17 @@
+﻿Build started 9/4/2019 11:27:02 AM.
+     1>Project "C:\Users\shihao\Documents\C_tutor\stage_demo\build\stage_scan.vcxproj" on node 2 (Rebuild target(s)).
+     1>CustomBuild:
+         Building Custom Rule C:/Users/shihao/Documents/C_tutor/stage_demo/source/CMakeLists.txt
+         CMake does not need to re-run because C:\Users\shihao\Documents\C_tutor\stage_demo\build\CMakeFiles\generate.stamp is up-to-date.
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /IC:\Users\shihao\Documents\C_tutor\stage_demo\source\include /IC:\Libraries\stimlib /nologo /W3 /WX- /O2 /Ob2 /Oy- /D WIN32 /D _WINDOWS /D NDEBUG /D "CMAKE_INTDIR=\"Release\"" /D _MBCS /Gm- /EHsc /MD /GS /fp:precise /Zc:wchar_t /Zc:forScope /GR /Fo"stage_scan.dir\Release\\" /Fd"stage_scan.dir\Release\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt C:\Users\shihao\Documents\C_tutor\stage_demo\source\stage_scan_src.cpp
+         stage_scan_src.cpp
+     1>C:\Users\shihao\Documents\C_tutor\stage_demo\source\stage_scan_src.cpp(81): warning C4244: 'argument' : conversion from 'float' to 'unsigned int', possible loss of data
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\shihao\Documents\C_tutor\stage_demo\build\stage_scan.exe" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib "C:\Users\shihao\Documents\Teledyne Scientific & Imaging\built-qcl-build-2019\A3200C.lib" /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /PDB:"C:/Users/shihao/Documents/C_tutor/stage_demo/build/stage_scan.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/shihao/Documents/C_tutor/stage_demo/build/Release/stage_scan.lib" /MACHINE:X86 /SAFESEH  /machine:X86 stage_scan.dir\Release\stage_scan_src.obj
+         stage_scan.vcxproj -> C:\Users\shihao\Documents\C_tutor\stage_demo\build\stage_scan.exe
+     1>Done Building Project "C:\Users\shihao\Documents\C_tutor\stage_demo\build\stage_scan.vcxproj" (Rebuild target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:01.26

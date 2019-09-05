@@ -1,0 +1,3 @@
+C:/Users/shihao/Documents/C_tutor/stage_demo/build/CMakeFiles/stage_scan.dir
+C:/Users/shihao/Documents/C_tutor/stage_demo/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/shihao/Documents/C_tutor/stage_demo/build/CMakeFiles/ZERO_CHECK.dir
